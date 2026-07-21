@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from "fs/promises"
+import {PDFParse} from 'pdf-parse'
 import path from "path"
 
 const UPLOAD_DIR = path.join(process.cwd(), "uploads")
@@ -21,6 +22,10 @@ export async function POST(request: Request) {
     const safeName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`
     const buffer = Buffer.from(await file.arrayBuffer())
     await writeFile(path.join(UPLOAD_DIR, safeName), buffer)
+    const parser=new PDFParse({data:buffer})
+    const {text}=await parser.getText()
+    await parser.destroy()
+    console.log(text)
 
     return Response.json({ name: file.name, storedAs: safeName, size: file.size })
 }

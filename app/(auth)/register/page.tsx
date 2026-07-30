@@ -1,12 +1,21 @@
+'use client';
 import { useState } from "react";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();               // stop the page reload
-    console.log({ email, password }); // here you'd send it to your server
+  const handleSubmit = async(e: React.FormEvent) => {
+    e.preventDefault();      
+    
+    const res=await fetch('/api/register', {
+      method:'POST',
+      headers:{
+        'content-type':'application/json'
+      },
+      body:JSON.stringify({email,password})
+    })
+
   };
 
   return (

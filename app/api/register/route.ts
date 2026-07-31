@@ -1,5 +1,6 @@
 import {prisma} from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { createSession } from "@/lib/session";
 
 export async function POST(req:Request){
     const {email,password}=await req.json()
@@ -21,5 +22,7 @@ export async function POST(req:Request){
         }
 
     })
+
+    await createSession(user.id)
     return new Response(JSON.stringify({message:"User created successfully"}),{status:201})
 }

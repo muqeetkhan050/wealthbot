@@ -17,7 +17,7 @@ export default function Login(){
             },
             body:JSON.stringify({email,password})
         })  
-
+}
 
     return(
         <div>
@@ -40,4 +40,4 @@ export default function Login(){
             </form>
         </div>
     )
-}}
+}

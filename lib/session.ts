@@ -39,3 +39,9 @@ export async function createSession(userId: number) {
     })
 }
 
+
+
+export async function deleteSession(){
+    const cookiesStore=await cookies()
+    cookiesStore.delete('session')
+}

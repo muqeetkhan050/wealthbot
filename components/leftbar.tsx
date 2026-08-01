@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {useRouter} from "next/navigation"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
@@ -14,6 +15,19 @@ const navItems = [
 
 export default function Leftbar() {
   const pathname = usePathname();
+  const router=useRouter()
+
+async function handleLogout() {
+    const res = await fetch('/api/logout', { method: 'POST' })
+    if (res.ok) {
+        router.push('/login')
+    }
+}
+
+
+
+
+
 
   return (
     <aside className="w-56 shrink-0 border-r border-zinc-200 bg-zinc-100 p-4 dark:border-zinc-800 dark:bg-zinc-950">
@@ -35,6 +49,12 @@ export default function Leftbar() {
           );
         })}
       </nav>
+      <button
+        onClick={handleLogout}
+        className="mt-4 rounded bg-red-500 px-3 py-2 text-sm font-medium text-white hover:bg-red-600"
+      >
+        Logout
+      </button>
     </aside>
   );
 }

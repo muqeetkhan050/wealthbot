@@ -1,7 +1,6 @@
 
 
 
-
 export default function Header({email}: {email:string}){
     return(
         <header className="flex items-center justify-between bg-zinc-100 dark:bg-black py-4 px-6">

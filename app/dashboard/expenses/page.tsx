@@ -1,33 +1,69 @@
-import { prisma } from "@/lib/prisma"
 
-export default async function ExpensesPage() {
+
+import { prisma } from "@/lib/prisma"
+import ExpenseSearch from "@/components/ExpenseSearch"
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+
+export default async function ExpensesPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ q?: string }>
+}) {
+    const { q } = await searchParams
+
     const expenses = await prisma.expense.findMany({
+        where: q
+            ? { description: { contains: q, mode: "insensitive" } }
+            : undefined,
         orderBy: { date: "desc" },
     })
+
+    const total = expenses.reduce((sum, expense) => sum + expense.amount, 0)
 
     return (
         <div>
             <h2 className="text-xl font-semibold text-black dark:text-zinc-50">Expenses</h2>
-            <table className="mt-4 w-full text-sm">
-                <thead>
-                    <tr className="text-left text-zinc-500 dark:text-zinc-400">
-                        <th className="py-2">Date</th>
-                        <th className="py-2">Description</th>
-                        <th className="py-2">Category</th>
-                        <th className="py-2 text-right">Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div className="mt-4">
+                <ExpenseSearch resultCount={expenses.length} />
+            </div>
+            <Table className="mt-4">
+                <TableCaption>
+                    {q ? `Expenses matching "${q}"` : "A list of your expenses."}
+                </TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead className="text-right">Amount</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
                     {expenses.map((expense) => (
-                        <tr key={expense.id} className="border-t border-zinc-200 dark:border-zinc-800">
-                            <td className="py-2">{expense.date.toLocaleDateString()}</td>
-                            <td className="py-2">{expense.description}</td>
-                            <td className="py-2">{expense.category}</td>
-                            <td className="py-2 text-right">${expense.amount.toFixed(2)}</td>
-                        </tr>
+                        <TableRow key={expense.id}>
+                            <TableCell>{expense.date.toLocaleDateString()}</TableCell>
+                            <TableCell className="font-medium">{expense.description}</TableCell>
+                            <TableCell>{expense.category}</TableCell>
+                            <TableCell className="text-right">${expense.amount.toFixed(2)}</TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
+                </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TableCell colSpan={3}>Total</TableCell>
+                        <TableCell className="text-right">${total.toFixed(2)}</TableCell>
+                    </TableRow>
+                </TableFooter>
+            </Table>
         </div>
     )
 }

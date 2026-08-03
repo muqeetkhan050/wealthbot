@@ -1,4 +1,5 @@
-
+import { CategoryIcon } from "@/components/CategoryIcon"
+    
 
 import { prisma } from "@/lib/prisma"
 import ExpenseSearch from "@/components/ExpenseSearch"
@@ -52,7 +53,9 @@ export default async function ExpensesPage({
                         <TableRow key={expense.id}>
                             <TableCell>{expense.date.toLocaleDateString()}</TableCell>
                             <TableCell className="font-medium">{expense.description}</TableCell>
-                            <TableCell>{expense.category}</TableCell>
+                            <TableCell>
+                                <CategoryIcon category={expense.category} />
+                            </TableCell>
                             <TableCell className="text-right">${expense.amount.toFixed(2)}</TableCell>
                         </TableRow>
                     ))}

@@ -16,6 +16,9 @@ model User {
   name     String?
   email    String    @unique
   password String
+  dateOfBirth DateTime?
+  monthlyIncome Float?
+  profilePicture String?
   expenses Expense[]
 }
 

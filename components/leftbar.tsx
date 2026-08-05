@@ -10,7 +10,7 @@ const navItems = [
   { href: "/dashboard/settings", label: "Settings" },
   { href: "/dashboard/profile", label: "Profile" },
   { href: "/dashboard/analytics", label: "Analytics" },
-  { href: "/dashboard/summary", label: "Summary" },
+  { href: "/dashboard/summaryTalk", label: "Summarytalk" },
 ];
 
 export default function Leftbar() {

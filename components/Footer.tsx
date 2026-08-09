@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Footer() {
   return (
     <>
       <section
-        className="px-6 py-24 text-center text-white"
+        className="px-6 py-16 text-center text-white"
         style={{ backgroundColor: "#0F472E" }}
       >
         <div className="mx-auto max-w-3xl">
@@ -15,16 +16,14 @@ export default function Footer() {
             We&apos;ll connect your accounts and show you what it catches in
             the first statement. No spreadsheets, no manual entry.
           </p>
-          <Link
-            href="/register"
-            className="mt-10 inline-block rounded-full bg-white px-8 py-3 text-sm font-semibold text-zinc-900"
-          >
-            Get started
-          </Link>
+          <Button
+            render={<Link href="/register">Get started</Link>}
+            className="mt-10 rounded-full bg-white px-8 py-3 text-zinc-900 hover:bg-white/90"
+          />
         </div>
       </section>
 
-      <footer className="bg-zinc-950 px-6 py-10 text-zinc-400">
+      <footer className="bg-zinc-950 px-6 py-6 text-zinc-400">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
           <div className="flex items-center gap-2">
             <span

@@ -3,6 +3,8 @@ import HomeNav from "@/components/HomeNav";
 import Footer from "@/components/Footer";
 import WhoItsFor from "@/components/WhoItsFor";
 import Logo from "@/components/Logo";
+import ResultsAndTeam from "@/components/ResultsAndTeam";
+import { Button } from "@/components/ui/button";
 
 const steps = [
   {
@@ -34,7 +36,7 @@ const steps = [
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <header className="flex items-center justify-between border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
+      <header className="sticky top-4 z-50 mx-auto flex w-full max-w-6xl items-center justify-between rounded-2xl border border-white/30 bg-white/30 px-6 py-3 shadow-lg backdrop-blur-md dark:border-zinc-700/30 dark:bg-zinc-900/30">
         <Logo />
         <HomeNav />
       </header>
@@ -57,20 +59,17 @@ export default function Home() {
           Your <span className="font-bold italic">bank statements</span>, transactions, and budgets live in different places. WealthBot pulls them into one place, catches overspending as it starts, categorizes it, and proves where your money went.
         </p>
         <div className="flex gap-4">
-          <Link
-            href="/login"
-            className="rounded px-5 py-2 text-sm font-medium text-white"
+          <Button
+            render={<Link href="/login">Login</Link>}
+            className="px-5 text-white"
             style={{ backgroundColor: "#0F472E" }}
-          >
-            Login
-          </Link>
-          <Link
-            href="/register"
-            className="rounded border px-5 py-2 text-sm font-medium"
+          />
+          <Button
+            variant="outline"
+            render={<Link href="/register">Register</Link>}
+            className="bg-transparent px-5"
             style={{ borderColor: "#0F472E", color: "#0F472E" }}
-          >
-            Register
-          </Link>
+          />
         </div>
       </section>
 
@@ -120,6 +119,7 @@ export default function Home() {
       </section>
 
       <WhoItsFor />
+      <ResultsAndTeam />
       <Footer />
     </div>
   );

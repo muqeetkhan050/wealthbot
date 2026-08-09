@@ -30,7 +30,10 @@ async function handleLogout() {
 
 
   return (
-    <aside className="w-56 shrink-0 border-r border-zinc-200 bg-zinc-100 p-4 dark:border-zinc-800 dark:bg-zinc-950">
+    <aside
+      className="flex w-56 shrink-0 flex-col rounded-2xl p-4"
+      style={{ backgroundColor: "#CCD1B0" }}
+    >
       <nav className="flex flex-col gap-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -40,9 +43,10 @@ async function handleLogout() {
               href={item.href}
               className={`rounded px-3 py-2 text-sm font-medium ${
                 isActive
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-black"
-                  : "text-zinc-700 hover:bg-zinc-200 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                  ? "text-white"
+                  : "text-zinc-700 hover:bg-black/5 dark:text-zinc-700"
               }`}
+              style={isActive ? { backgroundColor: "#0F472E" } : undefined}
             >
               {item.label}
             </Link>
@@ -51,7 +55,8 @@ async function handleLogout() {
       </nav>
       <button
         onClick={handleLogout}
-        className="mt-4 rounded bg-red-500 px-3 py-2 text-sm font-medium text-white hover:bg-red-600"
+        className="mt-auto w-full rounded-2xl px-4 py-2 text-sm font-medium text-white"
+        style={{ backgroundColor: "#0F472E" }}
       >
         Logout
       </button>

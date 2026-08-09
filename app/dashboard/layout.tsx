@@ -13,9 +13,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         : null
 
     return (
-        <div className="flex min-h-screen flex-col bg-background">
+        <div className="flex min-h-screen flex-col gap-4 bg-background p-4">
             <Header email={user?.email ?? ""} />
-            <div className="flex flex-1">
+            <div className="flex flex-1 gap-4">
                 <Leftbar />
                 <main className="flex-1 p-6">{children}</main>
             </div>

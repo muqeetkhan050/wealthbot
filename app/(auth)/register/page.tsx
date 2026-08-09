@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Logo from "@/components/Logo"
 
 export default function Register() {
     const [email, setEmail] = useState("")
@@ -26,7 +27,13 @@ export default function Register() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center">
+        <div className="flex min-h-screen flex-col items-center justify-center gap-6">
+            <div className="flex flex-col items-center gap-3">
+                <Logo />
+                <p className="font-mono text-xs font-semibold tracking-widest text-zinc-500 uppercase dark:text-zinc-400">
+                    AI for personal finance
+                </p>
+            </div>
             <Card className="w-full max-w-sm">
                 <CardHeader>
                     <CardTitle>Create an account</CardTitle>

@@ -1,36 +1,126 @@
 import Link from "next/link";
 import HomeNav from "@/components/HomeNav";
+import Footer from "@/components/Footer";
+import WhoItsFor from "@/components/WhoItsFor";
+import Logo from "@/components/Logo";
+
+const steps = [
+  {
+    index: "01",
+    label: "Ingest",
+    title: "Connect what you have",
+    body: "Bank statements, CSV exports, and manual entries — all pulled into one place. Nothing to reconcile by hand.",
+  },
+  {
+    index: "02",
+    label: "Detect",
+    title: "Learn your spending",
+    body: "WealthBot learns your normal spending, then flags unusual charges, subscriptions, and waste in real time.",
+  },
+  {
+    index: "03",
+    label: "Act",
+    title: "Take the fix",
+    body: "See exactly where to cut back, get alerts before you overspend, and adjust budgets on the fly.",
+  },
+  {
+    index: "04",
+    label: "Verify",
+    title: "Prove the savings",
+    body: "Every category traces back to the statement it came from. If it doesn't add up, you'll know.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
-      <header className="flex items-center justify-center border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
+    <div className="flex min-h-screen flex-col bg-background">
+      <header className="flex items-center justify-between border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
+        <Logo />
         <HomeNav />
       </header>
 
-      <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
-        <p className="max-w-md text-zinc-600 dark:text-zinc-400">
-          Upload your bank statements and let WealthBot categorize your spending automatically.
+      <section className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
+        <p
+          className="font-mono text-xs font-semibold tracking-widest text-zinc-500 uppercase dark:text-zinc-400"
+        >
+          AI for personal finance
+        </p>
+        <h1
+          className="text-5xl font-bold leading-tight sm:text-6xl"
+          style={{ color: "#0F472E" }}
+        >
+          AI for the people who
+          <br />
+          run their money.
+        </h1>
+        <p className="max-w-lg text-lg text-zinc-600 dark:text-zinc-400">
+          Your <span className="font-bold italic">bank statements</span>, transactions, and budgets live in different places. WealthBot pulls them into one place, catches overspending as it starts, categorizes it, and proves where your money went.
         </p>
         <div className="flex gap-4">
           <Link
             href="/login"
-            className="rounded bg-zinc-900 px-5 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-black"
+            className="rounded px-5 py-2 text-sm font-medium text-white"
+            style={{ backgroundColor: "#0F472E" }}
           >
             Login
           </Link>
           <Link
             href="/register"
-            className="rounded border border-zinc-300 px-5 py-2 text-sm font-medium text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
+            className="rounded border px-5 py-2 text-sm font-medium"
+            style={{ borderColor: "#0F472E", color: "#0F472E" }}
           >
             Register
           </Link>
         </div>
-      </main>
+      </section>
 
-      <footer className="flex items-center justify-center py-6">
-        <h1 className="text-2xl font-bold text-black dark:text-zinc-50">WealthBot</h1>
-      </footer>
+      <section className="px-6 py-24">
+        <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map((step) => (
+            <div
+              key={step.index}
+              className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
+            >
+              <p
+                className="font-mono text-xs font-semibold tracking-widest uppercase"
+                style={{ color: "#0F472E" }}
+              >
+                {step.index} / {step.label}
+              </p>
+              <h3 className="mt-3 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                {step.title}
+              </h3>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {step.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-zinc-950 px-6 py-24 text-white">
+        <div className="mx-auto max-w-4xl">
+          <p
+            className="font-mono text-xs font-semibold tracking-widest uppercase"
+            style={{ color: "#3fae7a" }}
+          >
+            Financial twin
+          </p>
+          <h2 className="mt-4 text-4xl leading-tight font-bold sm:text-5xl">
+            Every statement makes the model smarter.
+            <br />
+            The model makes your next budget smarter.
+          </h2>
+          <p className="mt-6 max-w-xl text-zinc-400">
+            Everything WealthBot ingests and every category it verifies builds
+            a living picture of your finances, so each recommendation gets
+            sharper than the last.
+          </p>
+        </div>
+      </section>
+
+      <WhoItsFor />
+      <Footer />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import WhoItsFor from "@/components/WhoItsFor";
 import Logo from "@/components/Logo";
 import ResultsAndTeam from "@/components/ResultsAndTeam";
+import SignalsAnimation from "@/components/SignalsAnimation";
 import { Button } from "@/components/ui/button";
 
 const steps = [
@@ -41,7 +42,7 @@ export default function Home() {
         <HomeNav />
       </header>
 
-      <section className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 pb-44 text-center">
+      <section className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 pt-40 pb-32 text-center">
         <p
           className="font-mono text-xs font-semibold tracking-widest text-zinc-500 uppercase dark:text-zinc-400"
         >
@@ -72,6 +73,10 @@ export default function Home() {
             className="w-32 bg-transparent px-5 py-3 text-base"
             style={{ borderColor: "#0F472E", color: "#0F472E" }}
           />
+        </div>
+
+        <div className="mt-16 w-full">
+          <SignalsAnimation />
         </div>
       </section>
 

@@ -17,6 +17,7 @@ export default function Footer() {
             the first statement. No spreadsheets, no manual entry.
           </p>
           <Button
+            nativeButton={false}
             render={<Link href="/register">Get started</Link>}
             className="mt-10 rounded-full bg-white px-8 py-3 text-zinc-900 hover:bg-white/90"
           />

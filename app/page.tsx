@@ -41,7 +41,7 @@ export default function Home() {
         <HomeNav />
       </header>
 
-      <section className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
+      <section className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 pb-44 text-center">
         <p
           className="font-mono text-xs font-semibold tracking-widest text-zinc-500 uppercase dark:text-zinc-400"
         >
@@ -60,14 +60,16 @@ export default function Home() {
         </p>
         <div className="flex gap-4">
           <Button
+            nativeButton={false}
             render={<Link href="/login">Login</Link>}
-            className="px-5 text-white"
+            className="w-32 px-5 py-3 text-base text-white"
             style={{ backgroundColor: "#0F472E" }}
           />
           <Button
+            nativeButton={false}
             variant="outline"
             render={<Link href="/register">Register</Link>}
-            className="bg-transparent px-5"
+            className="w-32 bg-transparent px-5 py-3 text-base"
             style={{ borderColor: "#0F472E", color: "#0F472E" }}
           />
         </div>

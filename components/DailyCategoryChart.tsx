@@ -1,13 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
   type ChartConfig,
 } from "@/components/ui/chart";
 import { monthKey } from "@/lib/expense-date";
@@ -61,33 +59,40 @@ export function DailyCategoryChart({
 
   const colors = useMemo(() => categoryColorMap(categories), [categories]);
 
+  const [selectedCategory, setSelectedCategory] = useState<string>(categories[0] ?? "");
+
+  useEffect(() => {
+    if (!categories.includes(selectedCategory)) {
+      setSelectedCategory(categories[0] ?? "");
+    }
+  }, [categories, selectedCategory]);
+
   const chartConfig = useMemo(
     () =>
-      Object.fromEntries(
-        categories.map((category) => [
-          category,
-          { label: category, color: colors[category] },
-        ])
-      ) satisfies ChartConfig,
-    [categories, colors]
+      ({
+        [selectedCategory]: {
+          label: selectedCategory,
+          color: colors[selectedCategory],
+        },
+      }) satisfies ChartConfig,
+    [selectedCategory, colors]
   );
 
   const data = useMemo(() => {
     const total = daysInMonth(selectedMonth);
-    const rows = Array.from({ length: total }, (_, i) => {
-      const day = i + 1;
-      const row: Record<string, number> = { day };
-      for (const category of categories) row[category] = 0;
-      return row;
-    });
+    const rows = Array.from({ length: total }, (_, i) => ({
+      day: i + 1,
+      [selectedCategory]: 0,
+    }));
 
     for (const expense of monthExpenses) {
+      if (expense.category !== selectedCategory) continue;
       const day = dayOfMonth(expense.date);
-      rows[day - 1][expense.category] += expense.amount;
+      rows[day - 1][selectedCategory] += expense.amount;
     }
 
     return rows;
-  }, [monthExpenses, categories, selectedMonth]);
+  }, [monthExpenses, selectedCategory, selectedMonth]);
 
   if (categories.length === 0) {
     return (
@@ -98,24 +103,36 @@ export function DailyCategoryChart({
   }
 
   return (
-    <ChartContainer config={chartConfig} className="h-[280px] w-full">
-      <LineChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis dataKey="day" tickLine={false} axisLine={false} />
-        <YAxis tickLine={false} axisLine={false} width={40} />
-        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-        <ChartLegend content={<ChartLegendContent />} />
-        {categories.map((category) => (
+    <div>
+      <div className="flex justify-center">
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+        >
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <ChartContainer config={chartConfig} className="mt-4 h-70 w-full">
+        <LineChart data={data}>
+          <CartesianGrid vertical={false} />
+          <XAxis dataKey="day" tickLine={false} axisLine={false} />
+          <YAxis tickLine={false} axisLine={false} width={40} />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
           <Line
-            key={category}
-            dataKey={category}
+            dataKey={selectedCategory}
             type="monotone"
-            stroke={colors[category]}
+            stroke={colors[selectedCategory]}
             dot={{ r: 3 }}
             strokeWidth={2}
           />
-        ))}
-      </LineChart>
-    </ChartContainer>
+        </LineChart>
+      </ChartContainer>
+    </div>
   );
 }

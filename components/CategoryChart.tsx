@@ -12,12 +12,12 @@ const chartConfig = {
 
 export function CategoryChart({ data }: { data: { category: string; amount: number }[] }) {
     return (
-        <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+        <ChartContainer config={chartConfig} className="h-[220px] w-full">
             <BarChart data={data}>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="category" tickLine={false} axisLine={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="amount" fill="var(--color-amount)" radius={4} />
+                <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                <Bar dataKey="amount" fill="var(--color-amount)" radius={4} barSize={40} />
             </BarChart>
         </ChartContainer>
     )

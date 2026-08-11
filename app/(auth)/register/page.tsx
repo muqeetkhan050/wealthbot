@@ -4,6 +4,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,11 +12,16 @@ import { Label } from "@/components/ui/label"
 import Logo from "@/components/Logo"
 
 export default function Register() {
+    const router = useRouter()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
+    const [submitting, setSubmitting] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        setError("")
+        setSubmitting(true)
 
         const res = await fetch('/api/register', {
             method: 'POST',
@@ -24,6 +30,17 @@ export default function Register() {
             },
             body: JSON.stringify({ email, password })
         })
+
+        setSubmitting(false)
+
+        if (!res.ok) {
+            const data = await res.json().catch(() => null)
+            setError(data?.message ?? "Something went wrong. Please try again.")
+            return
+        }
+
+        router.push('/dashboard')
+        router.refresh()
     }
 
     return (
@@ -63,7 +80,12 @@ export default function Register() {
                                     required
                                 />
                             </div>
-                            <Button type="submit" className="w-full">Register</Button>
+                            {error && (
+                                <p className="text-sm text-destructive">{error}</p>
+                            )}
+                            <Button type="submit" className="w-full" disabled={submitting}>
+                                {submitting ? "Creating account…" : "Register"}
+                            </Button>
                         </div>
                     </form>
                 </CardContent>

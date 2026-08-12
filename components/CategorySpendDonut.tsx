@@ -1,7 +1,7 @@
-// components/CategorySpendDonut.tsx
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { Cell, Pie, PieChart } from "recharts";
 import {
   ChartContainer,
@@ -15,6 +15,7 @@ import { categoryColorMap } from "@/components/DailyCategoryChart";
 type Expense = {
   amount: number;
   category: string;
+  description: string | null;
 };
 
 export function CategorySpendDonut({ expenses }: { expenses: Expense[] }) {
@@ -35,6 +36,36 @@ export function CategorySpendDonut({ expenses }: { expenses: Expense[] }) {
   const colors = useMemo(() => categoryColorMap(categories), [categories]);
   const total = useMemo(() => data.reduce((sum, d) => sum + d.amount, 0), [data]);
 
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+
+  const detailsByCategory = useMemo(() => {
+    const grouped = new Map<string, Map<string, { amount: number; count: number }>>();
+
+    for (const expense of expenses) {
+      const label = expense.description?.trim() || "No description";
+      if (!grouped.has(expense.category)) {
+        grouped.set(expense.category, new Map());
+      }
+      const byLabel = grouped.get(expense.category)!;
+      const existing = byLabel.get(label) ?? { amount: 0, count: 0 };
+      byLabel.set(label, {
+        amount: existing.amount + expense.amount,
+        count: existing.count + 1,
+      });
+    }
+
+    const result = new Map<string, { label: string; amount: number; count: number }[]>();
+    for (const [category, byLabel] of grouped) {
+      result.set(
+        category,
+        [...byLabel]
+          .map(([label, v]) => ({ label, ...v }))
+          .sort((a, b) => b.amount - a.amount)
+      );
+    }
+    return result;
+  }, [expenses]);
+
   const chartConfig = useMemo(
     () =>
       Object.fromEntries(
@@ -49,13 +80,13 @@ export function CategorySpendDonut({ expenses }: { expenses: Expense[] }) {
   if (data.length === 0) {
     return (
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        No expenses this month.
+        No expenses yet.
       </p>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
+    <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
       <div className="relative aspect-square w-56 shrink-0">
         <ChartContainer config={chartConfig} className="aspect-square h-full w-full">
           <PieChart>
@@ -83,30 +114,69 @@ export function CategorySpendDonut({ expenses }: { expenses: Expense[] }) {
         </div>
       </div>
 
-      <ul className="flex w-full flex-col gap-3">
-        {data.map(({ category, amount }) => (
-          <li key={category} className="flex items-center gap-3">
-            <span
-              className="flex size-8 shrink-0 items-center justify-center rounded-full"
-              style={{ backgroundColor: `${colors[category]}22` }}
-            >
-              <CategoryIcon category={category} />
-            </span>
-            <div className="flex flex-1 items-center justify-between gap-2">
-              <div>
-                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                  {category}
-                </p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                  {total > 0 ? Math.round((amount / total) * 100) : 0}%
-                </p>
-              </div>
-              <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                ${amount.toFixed(2)}
-              </p>
-            </div>
-          </li>
-        ))}
+      <ul className="flex w-full flex-col gap-1">
+        {data.map(({ category, amount }) => {
+          const isExpanded = expandedCategory === category;
+          const details = detailsByCategory.get(category) ?? [];
+
+          return (
+            <li key={category}>
+              <button
+                type="button"
+                onClick={() =>
+                  setExpandedCategory(isExpanded ? null : category)
+                }
+                className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-black/5 dark:hover:bg-white/5"
+              >
+                <span
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full"
+                  style={{ backgroundColor: `${colors[category]}22` }}
+                >
+                  <CategoryIcon category={category} />
+                </span>
+                <div className="flex flex-1 items-center justify-between gap-2">
+                  <div>
+                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      {category}
+                    </p>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                      {total > 0 ? Math.round((amount / total) * 100) : 0}%
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                      ${amount.toFixed(2)}
+                    </p>
+                    <ChevronDown
+                      className={`size-4 text-zinc-400 transition-transform ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
+                </div>
+              </button>
+
+              {isExpanded && (
+                <ul className="mb-2 ml-11 flex flex-col gap-1 border-l border-zinc-200 pl-3 dark:border-zinc-800">
+                  {details.map((detail) => (
+                    <li
+                      key={detail.label}
+                      className="flex items-center justify-between gap-2 py-1 text-xs"
+                    >
+                      <span className="text-zinc-600 dark:text-zinc-400">
+                        {detail.label}
+                        {detail.count > 1 ? ` ×${detail.count}` : ""}
+                      </span>
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                        ${detail.amount.toFixed(2)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

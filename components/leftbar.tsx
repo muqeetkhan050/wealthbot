@@ -11,6 +11,7 @@ const navItems = [
   { href: "/dashboard/profile", label: "Profile" },
   { href: "/dashboard/analytics", label: "Analytics" },
   { href: "/dashboard/summaryTalk", label: "Summarytalk" },
+  {href:"/dashboard/Invest", label: "Investing"},
 ];
 
 export default function Leftbar() {

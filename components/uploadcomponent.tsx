@@ -1,5 +1,6 @@
 'use client'
 import { useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 
 type UploadStatus = "uploading" | "done" | "error"
 
@@ -10,6 +11,7 @@ type UploadItem = {
 }
 
 export default function UploadDocument() {
+    const router = useRouter()
     const [items, setItems] = useState<UploadItem[]>([])
     const [dragActive, setDragActive] = useState(false)
     const inputRef = useRef<HTMLInputElement>(null)
@@ -33,6 +35,7 @@ export default function UploadDocument() {
                         : item
                 )
             )
+            router.refresh()
         } catch (err) {
             setItems((prev) =>
                 prev.map((item) =>

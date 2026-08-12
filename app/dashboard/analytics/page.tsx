@@ -1,14 +1,22 @@
 
 
 
+import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
+import { decrypt } from "@/lib/session"
 import { CategoryChart } from "@/components/CategoryChart"
 import { AnalyticsCharts } from "@/components/AnalyticsCharts"
 
 export default async function Analytics() {
-    const analyticsData = await prisma.expense.findMany({
-        orderBy: { date: "desc" }
-    })
+    const cookieStore = await cookies()
+    const session = await decrypt(cookieStore.get('session')?.value)
+
+    const analyticsData = session
+        ? await prisma.expense.findMany({
+              where: { authorId: session.userId },
+              orderBy: { date: "desc" }
+          })
+        : []
 
     const totals = new Map<string, number>()
     for (const expense of analyticsData) {

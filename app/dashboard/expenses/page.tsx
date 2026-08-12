@@ -1,7 +1,8 @@
 import { CategoryIcon } from "@/components/CategoryIcon"
-    
+import { cookies } from "next/headers"
 
 import { prisma } from "@/lib/prisma"
+import { decrypt } from "@/lib/session"
 import ExpenseSearch from "@/components/ExpenseSearch"
 import {
     Table,
@@ -21,12 +22,18 @@ export default async function ExpensesPage({
 }) {
     const { q } = await searchParams
 
-    const expenses = await prisma.expense.findMany({
-        where: q
-            ? { description: { contains: q, mode: "insensitive" } }
-            : undefined,
-        orderBy: { date: "desc" },
-    })
+    const cookieStore = await cookies()
+    const session = await decrypt(cookieStore.get('session')?.value)
+
+    const expenses = session
+        ? await prisma.expense.findMany({
+              where: {
+                  authorId: session.userId,
+                  ...(q ? { description: { contains: q, mode: "insensitive" } } : {}),
+              },
+              orderBy: { date: "desc" },
+          })
+        : []
 
     const total = expenses.reduce((sum, expense) => sum + expense.amount, 0)
 

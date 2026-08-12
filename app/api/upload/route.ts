@@ -1,13 +1,22 @@
 import { mkdir, writeFile } from "fs/promises"
 import {PDFParse} from 'pdf-parse'
 import path from "path"
+import { cookies } from "next/headers"
 import {PrismaPg} from '@prisma/adapter-pg'
 import { PrismaClient } from "@/app/generated/prisma/client"
 import { GoogleGenAI,Type } from "@google/genai"
+import { decrypt } from "@/lib/session"
 const UPLOAD_DIR = path.join(process.cwd(), "uploads")
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
 export async function POST(request: Request) {
+    const cookieStore = await cookies()
+    const session = await decrypt(cookieStore.get('session')?.value)
+
+    if (!session) {
+        return Response.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const formData = await request.formData()
     const file = formData.get("file")
 
@@ -62,7 +71,7 @@ for (const tx of transactions) {
             category: tx.category,
             description: tx.description,
             date: new Date(tx.date),
-            authorId: 1,
+            authorId: session.userId,
         },
     })
 }

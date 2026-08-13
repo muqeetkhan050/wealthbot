@@ -2,6 +2,7 @@ import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import { decrypt } from "@/lib/session"
 import { getStockQuote } from "@/lib/stocks"
+import { StockChart } from "@/components/StockChart"
 import { HoldingForm } from "@/components/HoldingForm"
 import { DeleteHoldingButton } from "@/components/DeleteHoldingButton"
 
@@ -54,6 +55,9 @@ export default async function InvestPage() {
                     </li>
                 ))}
             </ul>
+            <div className="mb-10">
+    <StockChart />
+</div>
 
             <div className="mt-8">
                 <HoldingForm />

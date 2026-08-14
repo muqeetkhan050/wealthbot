@@ -2,6 +2,9 @@ import { cookies } from "next/headers"
 import { decrypt } from "@/lib/session"
 import { prisma } from "@/lib/prisma"
 import { ProfileForm } from "@/components/ProfileForm"
+import { BudgetTargetsSection } from "@/components/BudgetTargetsSection"
+import { AddIncomeForm } from "@/components/AddIncomeForm"
+import { toBudgetRows } from "@/lib/budget"
 
 export default async function Profile() {
     const cookieStore = await cookies()
@@ -12,8 +15,14 @@ export default async function Profile() {
         return null
     }
 
+    const [allExpenses, allIncomes, budgets] = await Promise.all([
+        prisma.expense.findMany({ where: { authorId: user.id } }),
+        prisma.income.findMany({ where: { authorId: user.id } }),
+        prisma.budget.findMany({ where: { authorId: user.id } }),
+    ])
+
     return (
-        <div className="max-w-lg">
+        <div className="max-w-lg space-y-8">
             <h2 className="text-xl font-semibold text-black dark:text-zinc-50">Profile</h2>
             <div className="mt-4">
                 <ProfileForm
@@ -23,6 +32,19 @@ export default async function Profile() {
                     profilePicture={user.profilePicture}
                 />
             </div>
+
+            <AddIncomeForm />
+
+            <BudgetTargetsSection
+                title="Income budgets"
+                type="INCOME"
+                rows={toBudgetRows(allIncomes, budgets, "INCOME")}
+            />
+            <BudgetTargetsSection
+                title="Expense budgets"
+                type="EXPENSE"
+                rows={toBudgetRows(allExpenses, budgets, "EXPENSE")}
+            />
         </div>
     )
 }

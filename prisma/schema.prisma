@@ -7,16 +7,27 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Holding{
+  id Int @id @default(autoincrement())
+  symbol String
+  shares Float
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
+}
+
 model User {
-  id       Int       @id @default(autoincrement())
-  name     String?
-  email    String    @unique
-  password String
-  dateOfBirth DateTime?
-  monthlyIncome Float?
+  id             Int       @id @default(autoincrement())
+  name           String?
+  email          String    @unique
+  password       String
+  dateOfBirth    DateTime?
+  monthlyIncome  Float?
   profilePicture String?
-  expenses Expense[]
-  holdings Holding[]
+  expenses       Expense[]
+  incomes        Income[]
+  budgets        Budget[]
+  holdings       Holding[]
 }
 
 model Expense {
@@ -29,10 +40,28 @@ model Expense {
   authorId    Int
 }
 
-model Holding{
-  id Int @id @default(autoincrement())
-  symbol String
-  shares Float
-  author User @relation(fields: [authorId], references: [id])
+model Income {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  category    String
+  description String?
+  date        DateTime
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    Int
+}
+
+enum BudgetType {
+  INCOME
+  EXPENSE
+}
+
+model Budget {
+  id       Int        @id @default(autoincrement())
+  type     BudgetType
+  category String
+  target   Float
+  author   User       @relation(fields: [authorId], references: [id])
   authorId Int
+
+  @@unique([authorId, type, category])
 }

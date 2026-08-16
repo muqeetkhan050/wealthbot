@@ -5,6 +5,7 @@ import UploadDocument from "@/components/uploadcomponent"
 import { CategorySpendDonut } from "@/components/CategorySpendDonut"
 import { BudgetSection } from "@/components/BudgetSection"
 import { IncomeExpenseStatement } from "@/components/IncomeExpenseStatement"
+import { IncomeExpenseTrendChart } from "@/components/IncomeExpenseTrendChart"
 import { toBudgetRows } from "@/lib/budget"
 
 export default async function Dashboard() {
@@ -24,10 +25,11 @@ export default async function Dashboard() {
             <h2 className="text-xl font-semibold text-black dark:text-zinc-50">Dashboard</h2>
 
             <div className="mt-4">
-                <IncomeExpenseStatement
-                    income={allIncomes.reduce((sum, i) => sum + i.amount, 0)}
-                    expenses={allExpenses}
-                />
+                <IncomeExpenseTrendChart income={allIncomes} expenses={allExpenses} />
+            </div>
+
+            <div className="mt-6 overflow-x-auto">
+                <IncomeExpenseStatement income={allIncomes} expenses={allExpenses} />
             </div>
 
             <div className="mt-8 space-y-6">

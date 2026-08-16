@@ -1,48 +1,83 @@
-type Expense = {
-  amount: number
-}
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { monthlyIncomeExpense } from "@/lib/expense-date"
+
+const GOOD = "#0ca30c"
+const CRITICAL = "#d03b3b"
+
+type Item = { amount: number; date: string | Date }
 
 export function IncomeExpenseStatement({
   income,
   expenses,
 }: {
-  income: number | null
-  expenses: Expense[]
+  income: Item[]
+  expenses: Item[]
 }) {
-  const totalIncome = income ?? 0
-  const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const net = totalIncome - totalExpenses
+  const rows = monthlyIncomeExpense(income, expenses)
+
+  if (rows.length === 0) {
+    return (
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        No income or expenses recorded yet.
+      </p>
+    )
+  }
 
   return (
-    <div className="rounded-xl ring-1 ring-foreground/10">
-      <div className="grid grid-cols-1 divide-y divide-foreground/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-        <div className="p-4">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">Income</p>
-          <p className="mt-1 text-lg font-semibold text-emerald-600 dark:text-emerald-400">
-            ${totalIncome.toFixed(2)}
-          </p>
-        </div>
+    <Table className="bg-transparent">
+      <TableHeader>
+        <TableRow className="hover:bg-transparent">
+          <TableHead>Month</TableHead>
+          <TableHead className="text-right">Income</TableHead>
+          <TableHead className="text-right">Expense</TableHead>
+          <TableHead className="w-40">Difference</TableHead>
+          <TableHead className="text-right">Net</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rows.map((row) => {
+          const total = row.income + row.expense
+          const incomePct = total > 0 ? (row.income / total) * 100 : 0
+          const expensePct = total > 0 ? (row.expense / total) * 100 : 0
 
-        <div className="p-4">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">Outcome</p>
-          <p className="mt-1 text-lg font-semibold text-rose-600 dark:text-rose-400">
-            ${totalExpenses.toFixed(2)}
-          </p>
-        </div>
-
-        <div className="p-4">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">Net</p>
-          <p
-            className={`mt-1 text-lg font-semibold ${
-              net >= 0
-                ? "text-zinc-900 dark:text-zinc-100"
-                : "text-rose-600 dark:text-rose-400"
-            }`}
-          >
-            {net >= 0 ? "+" : "-"}${Math.abs(net).toFixed(2)}
-          </p>
-        </div>
-      </div>
-    </div>
+          return (
+            <TableRow key={row.key} className="hover:bg-black/5 dark:hover:bg-white/5">
+              <TableCell className="font-medium text-zinc-900 dark:text-zinc-100">
+                {row.shortLabel}
+              </TableCell>
+              <TableCell className="text-right text-emerald-600 dark:text-emerald-400">
+                ${row.income.toFixed(2)}
+              </TableCell>
+              <TableCell className="text-right text-rose-600 dark:text-rose-400">
+                ${row.expense.toFixed(2)}
+              </TableCell>
+              <TableCell>
+                <div className="flex h-2 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                  <div style={{ width: `${incomePct}%`, backgroundColor: GOOD }} />
+                  <div className="w-0.5 shrink-0" />
+                  <div style={{ width: `${expensePct}%`, backgroundColor: CRITICAL }} />
+                </div>
+              </TableCell>
+              <TableCell
+                className={`text-right font-semibold ${
+                  row.net >= 0
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-rose-600 dark:text-rose-400"
+                }`}
+              >
+                {row.net >= 0 ? "+" : "-"}${Math.abs(row.net).toFixed(2)}
+              </TableCell>
+            </TableRow>
+          )
+        })}
+      </TableBody>
+    </Table>
   )
 }

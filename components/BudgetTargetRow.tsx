@@ -33,7 +33,7 @@ export function BudgetTargetRow({
     return (
         <div className="flex items-center gap-3 py-2">
             <p className="w-32 shrink-0 text-sm text-zinc-700 dark:text-zinc-300">{category}</p>
-            <p className="w-24 shrink-0 text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="w-28 shrink-0 text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400">
                 ${actual.toFixed(2)} spent
             </p>
             <Input
@@ -45,12 +45,14 @@ export function BudgetTargetRow({
                     setSaved(false)
                 }}
                 placeholder="Target"
-                className="w-28"
+                className="w-28 border border-black/40 dark:border-white/40"
             />
-            <Button type="button" size="sm" onClick={handleSave} disabled={saving}>
-                {saving ? "Saving…" : "Save"}
-            </Button>
-            {saved && <span className="text-xs text-green-600 dark:text-green-400">Saved</span>}
+            <div className="ml-auto flex items-center gap-2">
+                {saved && <span className="text-xs text-green-600 dark:text-green-400">Saved</span>}
+                <Button type="button" size="sm" onClick={handleSave} disabled={saving}>
+                    {saving ? "Saving…" : "Save"}
+                </Button>
+            </div>
         </div>
     )
 }

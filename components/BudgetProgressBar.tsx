@@ -22,7 +22,7 @@ export function BudgetProgressBar({
         />
       </div>
 
-      <div className="w-32 shrink-0 text-right text-sm font-medium text-zinc-900 dark:text-zinc-100">
+      <div className="w-40 shrink-0 text-right text-sm font-medium whitespace-nowrap text-zinc-900 dark:text-zinc-100">
         ${actual.toFixed(2)} / {target != null ? `$${target.toFixed(2)}` : "not set"}
       </div>
     </div>

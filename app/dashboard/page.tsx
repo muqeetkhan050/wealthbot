@@ -38,8 +38,9 @@ export default async function Dashboard() {
             </div>
 
             <h3 className="mt-8 text-sm font-semibold text-zinc-700 dark:text-zinc-300">All time</h3>
-            <div className="mt-4">
-                <CategorySpendDonut expenses={allExpenses} />
+            <div className="mt-4 grid gap-6 md:grid-cols-2">
+                <CategorySpendDonut title="Income by Category" centerLabel="Earned" items={allIncomes} />
+                <CategorySpendDonut title="Expenses by Category" centerLabel="Spent" items={allExpenses} />
             </div>
 
             <div className="mt-8">

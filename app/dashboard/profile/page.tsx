@@ -22,7 +22,7 @@ export default async function Profile() {
     ])
 
     return (
-        <div className="max-w-lg space-y-8">
+        <div className="w-full space-y-8">
             <h2 className="text-xl font-semibold text-black dark:text-zinc-50">Profile</h2>
             <div className="mt-4">
                 <ProfileForm

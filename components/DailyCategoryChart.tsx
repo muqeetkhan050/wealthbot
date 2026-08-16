@@ -9,6 +9,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { monthKey } from "@/lib/expense-date";
+import { CATEGORICAL_COLORS } from "@/lib/chart-colors";
 
 type Expense = {
   amount: number;
@@ -25,18 +26,10 @@ function dayOfMonth(date: string | Date) {
   return new Date(date).getDate();
 }
 
-const CHART_COLORS = [
-  "var(--chart-1)",
-  "var(--chart-2)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-];
-
 export function categoryColorMap(categories: string[]) {
   const sorted = [...categories].sort();
   return Object.fromEntries(
-    sorted.map((category, i) => [category, CHART_COLORS[i % CHART_COLORS.length]])
+    sorted.map((category, i) => [category, CATEGORICAL_COLORS[i % CATEGORICAL_COLORS.length]])
   );
 }
 

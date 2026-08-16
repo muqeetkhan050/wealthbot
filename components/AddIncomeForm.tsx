@@ -67,6 +67,7 @@ export function AddIncomeForm() {
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             required
+                            className="border border-black/40 dark:border-white/40"
                         />
                     </div>
                     <div className="grid gap-2">
@@ -88,7 +89,7 @@ export function AddIncomeForm() {
                             placeholder="Optional"
                         />
                     </div>
-                    <Button type="submit" disabled={submitting}>
+                    <Button type="submit" disabled={submitting} className="ml-auto">
                         {submitting ? "Adding…" : "Add"}
                     </Button>
                     {error && <p className="w-full text-sm text-destructive">{error}</p>}

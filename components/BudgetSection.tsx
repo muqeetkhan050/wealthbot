@@ -2,14 +2,7 @@
 
 import { BudgetProgressBar } from "@/components/BudgetProgressBar"
 import type { BudgetRow } from "@/lib/budget"
-
-const CHART_COLORS = [
-  "var(--chart-1)",
-  "var(--chart-2)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-]
+import { CATEGORICAL_COLORS } from "@/lib/chart-colors"
 
 export function BudgetSection({ title, rows }: { title: string; rows: BudgetRow[] }) {
   return (
@@ -22,7 +15,7 @@ export function BudgetSection({ title, rows }: { title: string; rows: BudgetRow[
             category={row.category}
             actual={row.actual}
             target={row.target}
-            color={CHART_COLORS[i % CHART_COLORS.length]}
+            color={CATEGORICAL_COLORS[i % CATEGORICAL_COLORS.length]}
           />
         ))}
       </div>

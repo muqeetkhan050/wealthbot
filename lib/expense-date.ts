@@ -13,9 +13,10 @@ export function monthLabel(key: string) {
 
 export function monthShortLabel(key: string) {
   const [year, month] = key.split("-").map(Number);
-  return new Date(year, month - 1, 1).toLocaleDateString(undefined, {
+  const shortMonth = new Date(year, month - 1, 1).toLocaleDateString(undefined, {
     month: "short",
   });
+  return `${shortMonth} '${String(year).slice(-2)}`;
 }
 
 export type MonthlyIncomeExpense = {

@@ -58,48 +58,21 @@ export async function POST(request: Request) {
     const safeName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`
     const buffer = Buffer.from(await file.arrayBuffer())
     await writeFile(path.join(UPLOAD_DIR, safeName), buffer)
-    const parser=new PDFParse({data:buffer})
-    const {text}=await parser.getText()
-    await parser.destroy()
+
+    let text: string
+    if (file.name.toLowerCase().endsWith(".csv")) {
+        text = buffer.toString("utf-8")
+    } else {
+        const parser = new PDFParse({ data: buffer })
+        text = (await parser.getText()).text
+        await parser.destroy()
+    }
+
     const adapter=new PrismaPg({connectionString: process.env.DATABASE_URL!})
     const prisma=new PrismaClient({adapter})
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
 
-// const geminiResponse = await ai.models.generateContent({
-//     model: "gemini-flash-latest",
-//     contents: `Extract every transaction from this bank statement text. Text:\n\n${text}`,
-//     config: {
-//         responseMimeType: "application/json",
-//         responseSchema: {
-//             type: Type.ARRAY,
-//             items: {
-//                 type: Type.OBJECT,
-//                 properties: {
-//                     date: { type: Type.STRING, description: "YYYY-MM-DD" },
-//                     description: { type: Type.STRING },
-//                     amount: { type: Type.NUMBER },
-//                     category: { type: Type.STRING, description: "e.g. Groceries, Dining, Transport, Bills, Entertainment, Other" },
-//                 },
-//                 required: ["date", "description", "amount", "category"],
-//             },
-//         },
-//     },
-// })
-
-// const transactions = JSON.parse(geminiResponse.text!)
-
-// for (const tx of transactions) {
-//     await prisma.expense.create({
-//         data: {
-//             amount: tx.amount,
-//             category: tx.category,
-//             description: tx.description,
-//             date: new Date(tx.date),
-//             authorId: session.userId,
-//         },
-//     })
-// }
 let geminiResponse
 try {
     geminiResponse = await generateContentWithRetry(ai, {

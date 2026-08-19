@@ -7,6 +7,7 @@ import { BudgetSection } from "@/components/BudgetSection"
 import { IncomeExpenseStatement } from "@/components/IncomeExpenseStatement"
 import { IncomeExpenseTrendChart } from "@/components/IncomeExpenseTrendChart"
 import { toBudgetRows } from "@/lib/budget"
+import { ALL_KNOWN_EXPENSE_CATEGORIES } from "@/lib/budget-categories"
 
 export default async function Dashboard() {
     const cookieStore = await cookies()
@@ -34,7 +35,11 @@ export default async function Dashboard() {
 
             <div className="mt-8 space-y-6">
                 <BudgetSection title="Income" rows={toBudgetRows(allIncomes, budgets, "INCOME")} />
-                <BudgetSection title="Expenses" rows={toBudgetRows(allExpenses, budgets, "EXPENSE")} />
+                <BudgetSection
+                    title="Expenses"
+                    rows={toBudgetRows(allExpenses, budgets, "EXPENSE", ALL_KNOWN_EXPENSE_CATEGORIES)}
+                    grouped
+                />
             </div>
 
             <h3 className="mt-8 text-sm font-semibold text-zinc-700 dark:text-zinc-300">All time</h3>

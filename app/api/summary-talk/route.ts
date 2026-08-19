@@ -58,7 +58,7 @@ ${rows}
 
 Question: ${question}
 
-Answer concisely in plain language (1-3 sentences). If the data doesn't contain enough information to answer, say so instead of guessing.`
+Answer concisely in plain language (1-2 sentences). Give ONE single, direct answer using all the data as a whole — do not break the answer down by month or period unless the question explicitly asks for a breakdown (e.g. "per month", "each month", "by category"). If the data doesn't contain enough information to answer, say so instead of guessing.`
 
     try {
         const response = await ai.models.generateContent({

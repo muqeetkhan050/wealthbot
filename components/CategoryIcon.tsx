@@ -1,4 +1,17 @@
-import { ShoppingCart, UtensilsCrossed, Car, Receipt, Film, Wallet, type LucideIcon } from "lucide-react"
+import {
+    ShoppingCart,
+    UtensilsCrossed,
+    Car,
+    Receipt,
+    Film,
+    Wallet,
+    Home,
+    Smartphone,
+    Zap,
+    Stethoscope,
+    PiggyBank,
+    type LucideIcon,
+} from "lucide-react"
 
 const categoryIcons: Record<string, LucideIcon> = {
     Groceries: ShoppingCart,
@@ -6,6 +19,11 @@ const categoryIcons: Record<string, LucideIcon> = {
     Transport: Car,
     Bills: Receipt,
     Entertainment: Film,
+    "Rent/Mortgage": Home,
+    "Phone & Internet": Smartphone,
+    Utilities: Zap,
+    "Medical Expenses": Stethoscope,
+    "Emergency Fund": PiggyBank,
 }
 
 export function CategoryIcon({ category }: { category: string }) {

@@ -6,6 +6,8 @@ import { CategorySpendDonut } from "@/components/CategorySpendDonut"
 import { BudgetSection } from "@/components/BudgetSection"
 import { IncomeExpenseStatement } from "@/components/IncomeExpenseStatement"
 import { IncomeExpenseTrendChart } from "@/components/IncomeExpenseTrendChart"
+import { CategorySpendTrendChart } from "@/components/CategorySpendTrendChart"
+import { InteractiveIncomeExpenseChart } from "@/components/InteractiveIncomeExpenseChart"
 import { toBudgetRows } from "@/lib/budget"
 import { ALL_KNOWN_EXPENSE_CATEGORIES } from "@/lib/budget-categories"
 
@@ -26,7 +28,15 @@ export default async function Dashboard() {
             <h2 className="text-xl font-semibold text-black dark:text-zinc-50">Dashboard</h2>
 
             <div className="mt-4">
+                <InteractiveIncomeExpenseChart income={allIncomes} expenses={allExpenses} />
+            </div>
+
+            <div className="mt-6">
                 <IncomeExpenseTrendChart income={allIncomes} expenses={allExpenses} />
+            </div>
+
+            <div className="mt-6">
+                <CategorySpendTrendChart items={allExpenses} />
             </div>
 
             <div className="mt-6 overflow-x-auto">

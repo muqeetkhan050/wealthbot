@@ -5,26 +5,29 @@ export function daysInMonth(key: string) {
     return new Date(year, month, 0).getDate()
 }
 
-export type TransactionPoint = {
-    day: number
-    date: string
-    amount: number
-    description: string
-    category: string
-}
+export type DailyTransaction = { description: string; amount: number }
+export type DailySpending = { day: number; total: number; transactions: DailyTransaction[] }
 
-export function monthlyTransactionPoints(
-    items: { amount: number; date: string | Date; description: string | null; category: string }[],
+export function monthlyDailySpending(
+    items: { amount: number; date: string | Date; description: string | null }[],
     selectedMonth: string
-): TransactionPoint[] {
-    return items
-        .filter((item) => monthKey(item.date) === selectedMonth)
-        .map((item) => ({
-            day: new Date(item.date).getDate(),
-            date: new Date(item.date).toISOString().split("T")[0],
-            amount: item.amount,
+): DailySpending[] {
+    const totalDays = daysInMonth(selectedMonth)
+    const rows: DailySpending[] = Array.from({ length: totalDays }, (_, i) => ({
+        day: i + 1,
+        total: 0,
+        transactions: [],
+    }))
+
+    for (const item of items) {
+        if (monthKey(item.date) !== selectedMonth) continue
+        const day = new Date(item.date).getDate()
+        rows[day - 1].total += item.amount
+        rows[day - 1].transactions.push({
             description: item.description?.trim() || "No description",
-            category: item.category,
-        }))
-        .sort((a, b) => a.day - b.day)
+            amount: item.amount,
+        })
+    }
+
+    return rows
 }

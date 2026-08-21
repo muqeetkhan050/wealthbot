@@ -7,7 +7,7 @@ import { PrismaClient } from "@/app/generated/prisma/client"
 import { GoogleGenAI,Type } from "@google/genai"
 import { decrypt } from "@/lib/session"
 const UPLOAD_DIR = path.join(process.cwd(), "uploads")
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024 
 
 function isRetryableGeminiError(error: unknown) {
     const status = (error as { status?: number })?.status
@@ -76,7 +76,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
 let geminiResponse
 try {
     geminiResponse = await generateContentWithRetry(ai, {
-        model: "gemini-flash-latest",
+        model: "gemini-flash-lite-latest",
         contents: `Extract every transaction from this bank statement text. Text:\n\n${text}`,
         config: {
             responseMimeType: "application/json",

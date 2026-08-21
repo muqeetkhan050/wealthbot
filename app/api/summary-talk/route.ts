@@ -62,7 +62,7 @@ Answer concisely in plain language (1-2 sentences). Give ONE single, direct answ
 
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-flash-latest",
+            model: "gemini-flash-lite-latest",
             contents: prompt,
         })
 

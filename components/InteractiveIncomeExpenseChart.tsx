@@ -2,11 +2,11 @@
 
 import { useMemo, useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart"
-import { daysInMonth, monthlyTransactionPoints, type TransactionPoint } from "@/lib/daily-income-expense"
+import { daysInMonth, monthlyDailySpending, type DailySpending } from "@/lib/daily-income-expense"
 import { monthKey, monthLabel } from "@/lib/expense-date"
 
 const GOOD = "#0ca30c"
@@ -17,26 +17,32 @@ const chartConfig = {
     expense: { label: "Expense", color: CRITICAL },
 } satisfies ChartConfig
 
-type Item = { amount: number; date: string | Date; description: string | null; category: string }
+type Item = { amount: number; date: string | Date; description: string | null }
 type SeriesKey = "income" | "expense"
 
-function TransactionTooltip({
+function DailySpendingTooltip({
     active,
     payload,
 }: {
     active?: boolean
-    payload?: { payload: TransactionPoint }[]
+    payload?: { payload: DailySpending }[]
 }) {
     if (!active || !payload?.length) return null
     const point = payload[0].payload
+    if (point.total === 0) return null
 
     return (
         <div className="grid gap-1 rounded-lg border border-border/50 bg-background px-3 py-2 text-xs shadow-xl">
-            <p className="font-medium text-foreground">
-                {new Date(point.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+            <p className="font-medium text-foreground">Day {point.day}</p>
+            {point.transactions.map((t, i) => (
+                <p key={i} className="flex items-center gap-3 text-muted-foreground">
+                    <span className="flex-1">{t.description}</span>
+                    <span className="font-mono text-foreground">${t.amount.toFixed(2)}</span>
+                </p>
+            ))}
+            <p className="mt-1 border-t border-border/50 pt-1 font-mono font-semibold text-foreground">
+                Total: ${point.total.toFixed(2)}
             </p>
-            <p className="text-foreground">{point.description}</p>
-            <p className="font-mono font-semibold text-foreground">${point.amount.toFixed(2)}</p>
         </div>
     )
 }
@@ -54,26 +60,26 @@ export function InteractiveIncomeExpenseChart({
     }, [income, expenses])
 
     const [index, setIndex] = useState(0)
-    const [activeChart, setActiveChart] = useState<SeriesKey>("income")
+    const [activeChart, setActiveChart] = useState<SeriesKey>("expense")
 
     const currentIndex = Math.min(Math.max(index, 0), Math.max(months.length - 1, 0))
     const selectedMonth = months[currentIndex]
 
-    const incomePoints = useMemo(
-        () => (selectedMonth ? monthlyTransactionPoints(income, selectedMonth) : []),
+    const incomeDaily = useMemo(
+        () => (selectedMonth ? monthlyDailySpending(income, selectedMonth) : []),
         [income, selectedMonth]
     )
-    const expensePoints = useMemo(
-        () => (selectedMonth ? monthlyTransactionPoints(expenses, selectedMonth) : []),
+    const expenseDaily = useMemo(
+        () => (selectedMonth ? monthlyDailySpending(expenses, selectedMonth) : []),
         [expenses, selectedMonth]
     )
 
     const totals = {
-        income: incomePoints.reduce((sum, p) => sum + p.amount, 0),
-        expense: expensePoints.reduce((sum, p) => sum + p.amount, 0),
+        income: incomeDaily.reduce((sum, d) => sum + d.total, 0),
+        expense: expenseDaily.reduce((sum, d) => sum + d.total, 0),
     }
 
-    const activePoints = activeChart === "income" ? incomePoints : expensePoints
+    const activeData = activeChart === "income" ? incomeDaily : expenseDaily
     const activeColor = activeChart === "income" ? GOOD : CRITICAL
 
     if (months.length === 0) {
@@ -93,7 +99,7 @@ export function InteractiveIncomeExpenseChart({
             <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
                 <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-0">
                     <CardTitle>Income vs Expense</CardTitle>
-                    <CardDescription>Every transaction in {monthLabel(selectedMonth)}</CardDescription>
+                    <CardDescription>Every day in {monthLabel(selectedMonth)}</CardDescription>
                 </div>
                 <div className="flex">
                     {(["income", "expense"] as const).map((key) => (
@@ -139,40 +145,31 @@ export function InteractiveIncomeExpenseChart({
                     </Button>
                 </div>
 
-                {activePoints.length === 0 ? (
-                    <p className="py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                        No {chartConfig[activeChart].label.toLowerCase()} transactions in {monthLabel(selectedMonth)}.
-                    </p>
-                ) : (
-                    <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
-                        <LineChart data={activePoints} margin={{ left: 12, right: 12, top: 8 }}>
-                            <CartesianGrid vertical={false} strokeDasharray="0" />
-                            <XAxis
-                                dataKey="day"
-                                type="number"
-                                domain={[1, daysInMonth(selectedMonth)]}
-                                tickLine={false}
-                                axisLine={false}
-                                tickMargin={8}
-                            />
-                            <YAxis
-                                tickLine={false}
-                                axisLine={false}
-                                tickMargin={8}
-                                tickFormatter={(value: number) => `$${value.toLocaleString()}`}
-                                width={64}
-                            />
-                            <Tooltip cursor={{ stroke: activeColor, strokeDasharray: "3 3" }} content={<TransactionTooltip />} />
-                            <Line
-                                dataKey="amount"
-                                type="linear"
-                                stroke={activeColor}
-                                strokeWidth={2}
-                                dot={{ r: 4, fill: activeColor, stroke: "var(--background)", strokeWidth: 1 }}
-                            />
-                        </LineChart>
-                    </ChartContainer>
-                )}
+                <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
+                    <BarChart data={activeData} margin={{ left: 12, right: 12, top: 8 }}>
+                        <CartesianGrid vertical={false} strokeDasharray="0" />
+                        <XAxis
+                            dataKey="day"
+                            type="number"
+                            domain={[1, daysInMonth(selectedMonth)]}
+                            ticks={Array.from({ length: daysInMonth(selectedMonth) }, (_, i) => i + 1)}
+                            interval={0}
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                            fontSize={11}
+                        />
+                        <YAxis
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                            tickFormatter={(value: number) => `$${value.toLocaleString()}`}
+                            width={64}
+                        />
+                        <Tooltip cursor={{ fill: "currentColor", fillOpacity: 0.06 }} content={<DailySpendingTooltip />} />
+                        <Bar dataKey="total" fill={activeColor} radius={[4, 4, 0, 0]} maxBarSize={24} />
+                    </BarChart>
+                </ChartContainer>
             </CardContent>
         </Card>
     )
